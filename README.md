@@ -20,14 +20,22 @@ Registra clientes, arma pedidos personalizados y consulta reportes de ventas en 
 ### Página de Bienvenida
 > Vista principal con estadísticas del día y acceso rápido a las funciones principales.
 
+![Bienvenida](static/screenshots/01_bienvenida.png)
+
 ### Nuevo Pedido
 > Formulario intuitivo para registrar clientes, armar pizzas y gestionar el carrito de pedido.
+
+![Nuevo Pedido](static/screenshots/02_nuevo_pedido.png)
 
 ### Reportes de Ventas
 > Vista unificada con pedidos del día, búsqueda por día/mes y acceso al detalle de cada venta.
 
+![Reportes](static/screenshots/03_reportes.png)
+
 ### Detalle del Pedido
 > Desglose completo de cada venta: datos del cliente, pizzas solicitadas y total pagado.
+
+![Detalle](static/screenshots/04_detalle.png)
 
 ---
 
