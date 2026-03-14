@@ -1,0 +1,104 @@
+{% extends 'layout.html' %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="animate-fade-in-up text-center py-12 md:py-20">
+    <div class="relative inline-block mb-6">
+        <span class="text-7xl md:text-8xl animate-glow inline-block rounded-full p-4">🍕</span>
+    </div>
+    <h1 class="text-4xl md:text-6xl font-black mb-4">
+        <span class="bg-gradient-to-r from-orange-400 via-red-400 to-pink-500 bg-clip-text text-transparent">
+            Bienvenido a PizzaApp
+        </span>
+    </h1>
+    <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10">
+        Sistema de gestión de pedidos de pizza. Registra, administra y consulta todos tus pedidos de forma rápida y sencilla.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="{{ url_for('pedidos.nuevo_pedido') }}" class="btn-primary inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl text-white font-bold text-lg shadow-lg">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Nuevo Pedido
+        </a>
+        <a href="{{ url_for('reportes.reportes') }}" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl text-white font-semibold text-lg border border-white/10 hover:bg-white/5 transition-all duration-300 hover:-translate-y-0.5">
+            📊 Ver Reportes
+        </a>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 animate-fade-in-up stagger-2">
+    <div class="glass rounded-2xl p-6 card-hover border border-white/10">
+        <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-2xl shadow-lg">
+                📦
+            </div>
+            <div>
+                <p class="text-3xl font-bold text-white">{{ pedidos_hoy }}</p>
+                <p class="text-sm text-gray-400 font-medium">Pedidos Hoy</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass rounded-2xl p-6 card-hover border border-white/10">
+        <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-2xl shadow-lg">
+                💰
+            </div>
+            <div>
+                <p class="text-3xl font-bold text-white">${{ "%.2f"|format(ventas_hoy) }}</p>
+                <p class="text-sm text-gray-400 font-medium">Ventas Hoy</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass rounded-2xl p-6 card-hover border border-white/10">
+        <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center text-2xl shadow-lg">
+                👥
+            </div>
+            <div>
+                <p class="text-3xl font-bold text-white">{{ clientes_total }}</p>
+                <p class="text-sm text-gray-400 font-medium">Clientes Registrados</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Orders Preview -->
+{% if pedidos_recientes %}
+<div class="animate-fade-in-up stagger-3">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+            📋 Pedidos de Hoy
+        </h2>
+        <a href="{{ url_for('reportes.reportes') }}" class="text-orange-400 hover:text-orange-300 text-sm font-semibold transition-colors flex items-center gap-1">
+            Ver todos →
+        </a>
+    </div>
+    <div class="glass rounded-2xl overflow-hidden border border-white/10">
+        <table class="w-full text-sm text-left">
+            <thead>
+                <tr class="border-b border-white/10 bg-white/5">
+                    <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider"># Pedido</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Cliente</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Fecha</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pedido in pedidos_recientes %}
+                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                    <td class="px-6 py-4 font-mono text-orange-400 font-semibold">#{{ pedido.id_pedido }}</td>
+                    <td class="px-6 py-4 font-medium text-white">{{ pedido.cliente.nombre }}</td>
+                    <td class="px-6 py-4 text-gray-400">{{ pedido.fecha.strftime('%d/%m/%Y') }}</td>
+                    <td class="px-6 py-4 text-right text-emerald-400 font-bold">${{ "%.2f"|format(pedido.total) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

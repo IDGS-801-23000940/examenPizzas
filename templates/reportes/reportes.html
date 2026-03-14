@@ -1,0 +1,158 @@
+{% extends 'layout.html' %}
+
+{% block title %}Reportes{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in-up">
+    <!-- Header -->
+    <div class="flex items-center gap-3 mb-8">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center text-xl shadow-lg">📊</div>
+        <div>
+            <h1 class="text-2xl font-bold text-white">Reportes de Ventas</h1>
+            <p class="text-sm text-gray-400">Consulta pedidos por día de la semana o por mes</p>
+        </div>
+    </div>
+
+    <!-- Search Card -->
+    <div class="glass rounded-2xl p-6 border border-white/10 mb-8 animate-fade-in-up stagger-1">
+        <form method="POST" class="flex flex-col sm:flex-row gap-4 items-end">
+            {{ form.hidden_tag() }}
+
+            <div class="flex-1">
+                <label class="block mb-2 text-sm font-semibold text-gray-300">Tipo de Consulta</label>
+                {{ form.tipo_consulta(class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm transition-all duration-300 hover:border-white/20", id="tipo_consulta") }}
+            </div>
+            <div class="flex-1">
+                <label class="block mb-2 text-sm font-semibold text-gray-300" id="valor-label">Día o Mes</label>
+                {{ form.valor(class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 text-sm transition-all duration-300 hover:border-white/20", placeholder="Ej. Lunes o Enero", id="valor_input") }}
+            </div>
+            <button type="submit" class="btn-primary px-8 py-3 rounded-xl text-white font-semibold text-sm shadow-lg whitespace-nowrap">
+                🔍 Consultar
+            </button>
+        </form>
+    </div>
+
+    <!-- Summary Stats -->
+    {% if total > 0 %}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 animate-fade-in-up stagger-2">
+        <div class="glass rounded-2xl p-5 border border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center text-lg">📦</div>
+                <div>
+                    <p class="text-2xl font-bold text-white">{{ resultados|length }}</p>
+                    <p class="text-xs text-gray-400 font-medium">Pedidos Encontrados</p>
+                </div>
+            </div>
+        </div>
+        <div class="glass rounded-2xl p-5 border border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-lg">💰</div>
+                <div>
+                    <p class="text-2xl font-bold text-emerald-400">${{ "%.2f"|format(total) }}</p>
+                    <p class="text-xs text-gray-400 font-medium">Total Acumulado</p>
+                </div>
+            </div>
+        </div>
+        <div class="glass rounded-2xl p-5 border border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center text-lg">📈</div>
+                <div>
+                    {% if resultados|length > 0 %}
+                    <p class="text-2xl font-bold text-violet-400">${{ "%.2f"|format(total / resultados|length) }}</p>
+                    {% else %}
+                    <p class="text-2xl font-bold text-violet-400">$0.00</p>
+                    {% endif %}
+                    <p class="text-xs text-gray-400 font-medium">Promedio por Pedido</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Section Title -->
+    <div class="flex items-center justify-between mb-4 animate-fade-in-up stagger-2">
+        {% if busqueda %}
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                🔎 Resultados: <span class="text-orange-400">{{ busqueda }}</span>
+            </h2>
+        {% else %}
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                📋 Pedidos Registrados Hoy
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                    {{ resultados|length }}
+                </span>
+            </h2>
+        {% endif %}
+    </div>
+
+    <!-- Results Table -->
+    <div class="glass rounded-2xl overflow-hidden border border-white/10 animate-fade-in-up stagger-3">
+        {% if resultados %}
+        <table class="w-full text-sm text-left">
+            <thead>
+                <tr class="border-b border-white/10 bg-white/5">
+                    <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Cliente</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Fecha</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Total del Pedido</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in resultados %}
+                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                    <td class="px-6 py-4 font-medium text-white whitespace-nowrap">{{ row.nombre }}</td>
+                    <td class="px-6 py-4 text-gray-400">{{ row.fecha if row.fecha is string else row.fecha.strftime('%d/%m/%Y') }}</td>
+                    <td class="px-6 py-4 text-right text-emerald-400 font-bold">${{ "%.2f"|format(row.total) }}</td>
+                    <td class="px-6 py-4 text-center">
+                        <a href="{{ url_for('pedidos.detalle_pedido', id_pedido=row.id_pedido) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-orange-500/10 text-orange-400 border border-orange-500/20 hover:bg-orange-500/20 transition-all duration-200">
+                            🧾 Ver detalle
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            {% if total > 0 %}
+            <tfoot>
+                <tr class="bg-white/5 border-t border-white/10">
+                    <td colspan="3" class="px-6 py-4 text-right text-sm font-bold text-gray-300 uppercase">Total Acumulado</td>
+                    <td class="px-6 py-4 text-right text-lg font-black text-emerald-400">${{ "%.2f"|format(total) }}</td>
+                </tr>
+            </tfoot>
+            {% endif %}
+        </table>
+        {% else %}
+        <div class="text-center py-16">
+            <span class="text-5xl mb-4 block">📭</span>
+            <p class="text-gray-400 text-base font-medium mb-1">No se encontraron pedidos</p>
+            <p class="text-gray-500 text-sm">
+                {% if busqueda %}
+                    No hay resultados para "{{ busqueda }}". Intenta con otro día o mes.
+                {% else %}
+                    No hay pedidos registrados para el día de hoy.
+                {% endif %}
+            </p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Dynamic placeholder based on search type
+    const tipoSelect = document.getElementById('tipo_consulta');
+    const valorInput = document.getElementById('valor_input');
+    const valorLabel = document.getElementById('valor-label');
+
+    function updatePlaceholder() {
+        if (tipoSelect.value === 'dia') {
+            valorInput.placeholder = 'Ej. Lunes, Martes, Miércoles...';
+            valorLabel.textContent = 'Día de la Semana';
+        } else {
+            valorInput.placeholder = 'Ej. Enero, Febrero, Marzo...';
+            valorLabel.textContent = 'Mes del Año';
+        }
+    }
+
+    tipoSelect.addEventListener('change', updatePlaceholder);
+    updatePlaceholder();
+</script>
+{% endblock %}

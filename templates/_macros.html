@@ -1,0 +1,86 @@
+{% macro render_field(field) %}
+  <div class="mb-5">
+    {{ field.label(class="block mb-2 text-sm font-semibold text-gray-300") }}
+    {% if field.errors %}
+      {{ field(class="w-full px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-white placeholder-red-300/50 text-sm transition-all duration-300") }}
+      <p class="mt-2 text-sm text-red-400 flex items-center gap-1">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+        {% for error in field.errors %}{{ error }}{% endfor %}
+      </p>
+    {% else %}
+      {% if field.type == 'RadioField' or field.type == 'MultipleCheckboxField' %}
+        <div class="flex flex-col space-y-2">
+          {% for subfield in field %}
+            <div class="flex items-center p-2 rounded-lg hover:bg-white/5 transition-colors">
+              {{ subfield(class="w-4 h-4 text-orange-500 bg-slate-700 border-slate-600 focus:ring-orange-500 rounded") }}
+              {{ subfield.label(class="ml-3 text-sm font-medium text-gray-300") }}
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        {{ field(class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 text-sm transition-all duration-300 hover:border-white/20") }}
+      {% endif %}
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{% macro render_flash() %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="mb-6 space-y-3" id="flash-messages">
+        {% for category, message in messages %}
+          {% set styles = 'bg-blue-500/10 border-blue-500/30 text-blue-300' %}
+          {% set icon = '💡' %}
+          {% if category == 'success' %}
+            {% set styles = 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300' %}
+            {% set icon = '✅' %}
+          {% endif %}
+          {% if category == 'error' %}
+            {% set styles = 'bg-red-500/10 border-red-500/30 text-red-300' %}
+            {% set icon = '❌' %}
+          {% endif %}
+          {% if category == 'warning' %}
+            {% set styles = 'bg-yellow-500/10 border-yellow-500/30 text-yellow-300' %}
+            {% set icon = '⚠️' %}
+          {% endif %}
+          {% if category == 'info' %}
+            {% set styles = 'bg-sky-500/10 border-sky-500/30 text-sky-300' %}
+            {% set icon = 'ℹ️' %}
+          {% endif %}
+
+          <div class="animate-slide-down px-5 py-4 rounded-xl border {{ styles }} flex items-center gap-3" role="alert">
+            <span class="text-lg">{{ icon }}</span>
+            <span class="font-medium text-sm">{{ message }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+{% endmacro %}
+
+{% macro stat_card(label, value, icon, color) %}
+  <div class="card-hover glass-light rounded-2xl p-6 group">
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-2xl">{{ icon|default('📊') }}</span>
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ color|default('bg-orange-100 text-orange-700') }}">
+        Hoy
+      </span>
+    </div>
+    <p class="text-3xl font-bold text-gray-900 mb-1">{{ value }}</p>
+    <p class="text-sm text-gray-500 font-medium">{{ label }}</p>
+  </div>
+{% endmacro %}
+
+{% macro pizza_row(pizza) %}
+  <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+    <td class="px-6 py-4 font-medium text-white whitespace-nowrap">{{ pizza.tamano }}</td>
+    <td class="px-6 py-4 text-gray-400">{{ pizza.ingredientes }}</td>
+    <td class="px-6 py-4 text-gray-300">{{ pizza.cantidad }}</td>
+    <td class="px-6 py-4 text-emerald-400 font-semibold">${{ "%.2f"|format(pizza.subtotal) }}</td>
+    <td class="px-6 py-4 text-right">
+      <button type="submit" formaction="{{ url_for('pedidos.quitar_pizza', id_temp=pizza.id_temp) }}" class="text-red-400 hover:text-red-300 font-medium text-sm transition-colors">
+        Quitar
+      </button>
+    </td>
+  </tr>
+{% endmacro %}

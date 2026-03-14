@@ -1,0 +1,163 @@
+{% extends 'layout.html' %}
+
+{% block title %}Nuevo Pedido{% endblock %}
+
+{% block content %}
+<form method="POST" id="pedido-form" novalidate>
+    {{ form.hidden_tag() }}
+
+    <div class="flex items-center gap-3 mb-8 animate-fade-in-up">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-xl shadow-lg">📝</div>
+        <div>
+            <h1 class="text-2xl font-bold text-white">Nuevo Pedido</h1>
+            <p class="text-sm text-gray-400">Registra un nuevo pedido de pizza</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <!-- Left Column -->
+        <div class="lg:col-span-7 space-y-6">
+            <!-- Client Data Card -->
+            <div class="glass rounded-2xl p-6 border border-white/10 animate-fade-in-up stagger-1">
+                <h2 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center text-xs font-black">1</span>
+                    Datos del Cliente
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block mb-2 text-sm font-semibold text-gray-300">{{ form.nombre.label.text }}</label>
+                        {{ form.nombre(class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 text-sm transition-all duration-300 hover:border-white/20", placeholder="Ej. Juan Perez") }}
+                        {% if form.nombre.errors %}<p class="mt-2 text-sm text-red-400">{{ form.nombre.errors[0] }}</p>{% endif %}
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-semibold text-gray-300">{{ form.telefono.label.text }}</label>
+                        {{ form.telefono(class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 text-sm transition-all duration-300 hover:border-white/20", placeholder="Ej. 4771234567") }}
+                        {% if form.telefono.errors %}<p class="mt-2 text-sm text-red-400">{{ form.telefono.errors[0] }}</p>{% endif %}
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block mb-2 text-sm font-semibold text-gray-300">{{ form.direccion.label.text }}</label>
+                        {{ form.direccion(class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 text-sm transition-all duration-300 hover:border-white/20", placeholder="Calle, Número, Colonia") }}
+                        {% if form.direccion.errors %}<p class="mt-2 text-sm text-red-400">{{ form.direccion.errors[0] }}</p>{% endif %}
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-semibold text-gray-300">{{ form.fecha.label.text }}</label>
+                        {{ form.fecha(class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 text-sm transition-all duration-300 hover:border-white/20", type="date") }}
+                        {% if form.fecha.errors %}<p class="mt-2 text-sm text-red-400">{{ form.fecha.errors[0] }}</p>{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pizza Builder Card -->
+            <div class="glass rounded-2xl p-6 border border-white/10 animate-fade-in-up stagger-2">
+                <h2 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center text-xs font-black">2</span>
+                    Armar Pizza
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block mb-3 text-sm font-semibold text-gray-300">{{ form.tamano.label.text }}</label>
+                        <div class="space-y-2">
+                            {% for subfield in form.tamano %}
+                            <label class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:bg-white/10 transition-all duration-200 group">
+                                {{ subfield(class="w-4 h-4 text-orange-500 bg-slate-700 border-slate-600 focus:ring-orange-500") }}
+                                <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">{{ subfield.label.text }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                        {% if form.tamano.errors %}<p class="mt-2 text-sm text-red-400">{{ form.tamano.errors[0] }}</p>{% endif %}
+                    </div>
+
+                    <div>
+                        <label class="block mb-3 text-sm font-semibold text-gray-300">{{ form.ingredientes.label.text }}</label>
+                        <div class="space-y-2 mb-5">
+                            {% for subfield in form.ingredientes %}
+                            <label class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:bg-white/10 transition-all duration-200 group">
+                                {{ subfield(class="w-4 h-4 text-orange-500 bg-slate-700 border-slate-600 focus:ring-orange-500 rounded") }}
+                                <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">{{ subfield.label.text }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+
+                        <label class="block mb-2 text-sm font-semibold text-gray-300">{{ form.num_pizzas.label.text }}</label>
+                        {{ form.num_pizzas(class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm transition-all duration-300 hover:border-white/20") }}
+                        {% if form.num_pizzas.errors %}<p class="mt-2 text-sm text-red-400">{{ form.num_pizzas.errors[0] }}</p>{% endif %}
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end">
+                    <button type="submit" formaction="{{ url_for('pedidos.agregar_pizza') }}" class="btn-primary inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white font-semibold text-sm shadow-lg">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        Agregar Pizza al Pedido
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Order Summary -->
+        <div class="lg:col-span-5">
+            <div class="glass rounded-2xl p-6 border border-white/10 sticky top-24 animate-fade-in-up stagger-3">
+                <h2 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-black">3</span>
+                    Resumen del Pedido
+                </h2>
+
+                <div class="rounded-xl overflow-hidden mb-5">
+                    <table class="w-full text-sm text-left">
+                        <thead>
+                            <tr class="border-b border-white/10 bg-white/5">
+                                <th class="px-4 py-3 text-xs font-bold text-gray-400 uppercase">Tamaño</th>
+                                <th class="px-4 py-3 text-xs font-bold text-gray-400 uppercase">Extras</th>
+                                <th class="px-4 py-3 text-xs font-bold text-gray-400 uppercase">Cant.</th>
+                                <th class="px-4 py-3 text-xs font-bold text-gray-400 uppercase">Subtotal</th>
+                                <th class="px-4 py-3"><span class="sr-only">Acciones</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if session.get('carrito') %}
+                                {% for item in session['carrito'] %}
+                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                    <td class="px-4 py-3 font-medium text-white whitespace-nowrap">{{ item.tamano }}</td>
+                                    <td class="px-4 py-3 text-gray-400 text-xs">{{ item.ingredientes }}</td>
+                                    <td class="px-4 py-3 text-gray-300">{{ item.cantidad }}</td>
+                                    <td class="px-4 py-3 text-emerald-400 font-semibold">${{ "%.2f"|format(item.subtotal) }}</td>
+                                    <td class="px-4 py-3 text-right">
+                                        <button type="submit" formaction="{{ url_for('pedidos.quitar_pizza', id_temp=item.id_temp) }}" class="text-red-400 hover:text-red-300 font-medium text-xs transition-colors">
+                                            ✕
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="px-4 py-8 text-center text-gray-500">
+                                        <span class="text-3xl mb-2 block">🛒</span>
+                                        <span class="text-sm">No hay pizzas en el pedido</span>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% set total = namespace(value=0) %}
+                {% if session.get('carrito') %}
+                    {% for item in session['carrito'] %}
+                        {% set total.value = total.value + item.subtotal %}
+                    {% endfor %}
+                {% endif %}
+
+                <div class="flex justify-between items-center p-4 rounded-xl bg-white/5 border border-white/10 mb-5">
+                    <span class="text-base font-semibold text-gray-300">Total a Pagar</span>
+                    <span class="text-2xl font-black text-emerald-400">${{ "%.2f"|format(total.value) }}</span>
+                </div>
+
+                <button type="submit" formaction="{{ url_for('pedidos.terminar_pedido') }}" class="btn-success w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-white font-bold text-base shadow-lg">
+                    ✅ Terminar Pedido
+                </button>
+            </div>
+        </div>
+
+    </div>
+</form>
+{% endblock %}
